@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """this module handles status and stats routs"""
-from flask import jsonify
+from json import dumps
 from api.v1.views import app_views
 
 
@@ -8,7 +8,7 @@ from api.v1.views import app_views
 def status():
     """returns a JSON says the status of the API is OK"""
     status_dict = {"status": "OK"}
-    return jsonify(status_dict)
+    return dumps(status_dict, indent=2)
 
 
 @app_views.route('/stats')
@@ -23,7 +23,8 @@ def stats():
     from models import storage
 
     classes = [('amenities', Amenity), ('cities', City),
-               ('places', Place,), ('reviews', Review,), ('states', State), ('users', User)]
+               ('places', Place,), ('reviews', Review,),
+               ('states', State), ('users', User)]
     stats_dict = {}
     for key, cls_object in classes:
         stats_dict[key] = storage.count(cls_object)
