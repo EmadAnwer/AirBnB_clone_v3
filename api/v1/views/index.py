@@ -4,14 +4,13 @@ from flask import jsonify
 from api.v1.views import app_views
 
 
-@app_views.route('/status')
+@app_views.route('/status', methods=['GET'])
 def status():
     """returns a JSON says the status of the API is OK"""
-    status_dict = {"status": "OK"}
-    return jsonify(status_dict)
+    return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
+@app_views.route('/stats', methods=['GET'])
 def stats():
     """retrieves the number of each object"""
     from models.amenity import Amenity
