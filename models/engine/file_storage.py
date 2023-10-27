@@ -35,6 +35,7 @@ class FileStorage:
         return self.__objects
 
     def count(self, cls=None):
+        """count the number of objects in storage"""
         if not cls:
             return len(self.__objects)
         return len(list(filter(lambda o: isinstance(o, cls),
