@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """handles all default RESTFul API actions for User objects"""
+
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -41,8 +42,7 @@ def post_user():
         return jsonify({'error': 'Missing email'}), 400
     if not request_body.get('password'):
         return jsonify({'error': 'Missing password'}), 400
-    new_user = User(email=request_body.get('email'),
-                    password=request_body.get('password'))
+    new_user = User(**request_body)
     post_response = REST_actions.post(new_user)
     return post_response.get('object dict'), post_response.get('status code')
 
