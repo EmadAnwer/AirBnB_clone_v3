@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """handles all default RESTFul API actions for User objects"""
-
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -8,13 +7,13 @@ from models.user import User
 from api.v1.views.base_actions import REST_actions
 
 
-@app_views.route('/users', methods=['GET'], strict_slashes=True)
+@app_views.route('/users', methods=['GET'])
 def get_users():
     """gets all User objects"""
     return jsonify(REST_actions.get(User))
 
 
-@app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=True)
+@app_views.route('/users/<user_id>', methods=['GET'])
 def get_user(user_id):
     """gets a User object by its id"""
     user = REST_actions.get_by_id(User, user_id)
@@ -23,7 +22,7 @@ def get_user(user_id):
     return jsonify(user.get('object dict'))
 
 
-@app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=True)
+@app_views.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     """deletes a User object by its id"""
     delete_response = REST_actions.delete(User, user_id)
@@ -32,7 +31,7 @@ def delete_user(user_id):
     return jsonify({})
 
 
-@app_views.route('/users', methods=['POST'], strict_slashes=True)
+@app_views.route('/users', methods=['POST'])
 def post_user():
     """creates a User"""
     request_body = request.get_json()
@@ -47,7 +46,7 @@ def post_user():
     return post_response.get('object dict'), post_response.get('status code')
 
 
-@app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=True)
+@app_views.route('/users/<user_id>', methods=['PUT'])
 def put_user(user_id):
     """ updates a User object by its id """
     request_body = request.get_json()
