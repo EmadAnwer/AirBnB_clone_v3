@@ -46,11 +46,11 @@ def post_place(city_id):
         abort(404)
     request_body = request.get_json()
     if request_body is None:
-        abort(400, "Not a JSON")
+        return jsonify({'error': 'Not a JSON'}), 400
     if not request_body.get('user_id'):
-        abort(400, "Missing user_id")
+        return jsonify({'error': 'Missing user_id'}), 400
     if not request_body.get('name'):
-        abort(400, "Missing name")
+        return jsonify({'error': 'Missing name'}), 400
     user = storage.get(User, request_body.get('user_id'))
     if user is None:
         abort(404)
