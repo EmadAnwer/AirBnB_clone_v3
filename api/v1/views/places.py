@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""handles all default RESTFul API actions for User objects"""
-
+"""handles all default RESTFul API actions for Place objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
