@@ -51,7 +51,7 @@ def put_state(state_id):
     if not request_body:
         abort(400, "Not a JSON")
 
-    args_to_ignore = ['id', 'created_at', 'updated_at', '__class__']
+    args_to_ignore = ['id', 'created_at', 'updated_at']
     put_response = REST_actions.put(
         State, state_id, args_to_ignore, request_body)
     if put_response.get('status code') == 404:
