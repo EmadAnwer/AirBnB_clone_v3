@@ -1,30 +1,31 @@
 #!/usr/bin/python3
-"""this module is the entry point to the REST API"""
-from flask import Flask, jsonify
-from models import storage
+"""Entry point for API"""
+
 from api.v1.views import app_views
+
+from flask import Flask, make_response, jsonify
+from models import storage
 from os import getenv
 
 app = Flask(__name__)
+
 app.url_map.strict_slashes = False
+
 app.register_blueprint(app_views)
 
 
-@app.errorhandler(404)
-def page_not_found(error):
-    """handles 404 error by returning a JSON error response"""
-    error_dict = {"error": "Not found"}
-    status_code = 404
-    return jsonify(error_dict), status_code
-
-
 @app.teardown_appcontext
-def teardown_db(exception):
-    """closes the storage on teardown"""
+def terminate(exc):
+    """Close SQLAlchemy session"""
     storage.close()
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({"error": "Not found"}), 404)
+
+
 if __name__ == "__main__":
-    host = getenv('HBNB_API_HOST', '0.0.0.0')
-    port = getenv('HBNB_API_PORT', 5000)
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=getenv('HBNB_API_HOST', '0.0.0.0'),
+            port=getenv('HBNB_API_PORT', 5000),
+            threaded=True)
