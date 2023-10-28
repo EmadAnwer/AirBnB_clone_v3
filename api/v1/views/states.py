@@ -13,15 +13,14 @@ def get_states():
     return jsonify(REST_actions.get(State))
 
 
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
+@app_views.route('/states', methods=['POST'])
 def post_state():
     """creates a State"""
     request_body = request.get_json()
-
     if not request_body:
-        return {'error': 'Not a JSON'}, 400
+        abort(400, "Not a JSON")
     if not request_body.get('name'):
-        return {'error': 'Missing name'}, 400
+        abort(400, "Missing name")
     new_state = State(name=request_body.get('name'))
     post_response = REST_actions.post(new_state)
     return post_response.get('object dict'), post_response.get('status code')
@@ -50,7 +49,7 @@ def put_state(state_id):
     """ updates a State object by its id """
     request_body = request.get_json()
     if not request_body:
-        return {'error': 'Not a JSON'}, 400
+        abort(400, "Not a JSON")
 
     args_to_ignore = ['id', 'created_at', 'updated_at', '__class__']
     put_response = REST_actions.put(
