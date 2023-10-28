@@ -1,30 +1,28 @@
 #!/usr/bin/python3
-"""index"""
-from api.v1.views import app_views
+"""this module handles status and stats routs"""
 from flask import jsonify
-from models import storage
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
+from api.v1.views import app_views
 from models.amenity import Amenity
+from models.city import City
+from models.place import Place
 from models.review import Review
+from models.state import State
+from models.user import User
+from models import storage
 
-classes = {"users": "User", "places": "Place", "states": "State",
-           "cities": "City", "amenities": "Amenity",
-           "reviews": "Review"}
 
-
-@app_views.route('/status', methods=['GET'])
+@app_views.route('/status')
 def status():
-    ''' routes to status page '''
-    return jsonify({'status': 'OK'})
+    """returns a JSON says the status of the API is OK"""
+    return jsonify({"status": "OK"}), 200
 
 
-@app_views.route('/stats', methods=['GET'])
-def count():
-    '''retrieves the number of each objects by type'''
+@app_views.route('/stats')
+def stats():
+    """retrieves the number of each objects by type"""
+    classes = {"amenities": Amenity, "cities": City, "places": Place,
+               "reviews": Review, "states": State, "users": User}
     count_dict = {}
-    for cls in classes:
-        count_dict[cls] = storage.count(classes[cls])
+    for key, value in classes.items():
+        count_dict[key] = storage.count(value)
     return jsonify(count_dict)
