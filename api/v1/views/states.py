@@ -48,13 +48,13 @@ def delete_state(state_id):
 @app_views.route('/states/<state_id>', methods=['PUT'])
 def put_state(state_id):
     """ updates a State object by its id """
-    state = storage.get(State, state_id)
-    if not state:
-        abort(404)
     request_body = request.get_json()
     if not request_body:
         return {'error': 'Not a JSON'}, 400
-    args_to_ignore = ['id', 'created_at', 'updated_at']
-    put_response = REST_actions.put(state, args_to_ignore, request_body)
 
+    args_to_ignore = ['id', 'created_at', 'updated_at', '__class__']
+    put_response = REST_actions.put(
+        State, state_id, args_to_ignore, request_body)
+    if put_response.get('status code') == 404:
+        abort(404)
     return put_response.get('object dict'), put_response.get('status code')

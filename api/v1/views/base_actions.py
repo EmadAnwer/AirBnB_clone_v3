@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+"""handles all default RESTFul API actions for State objects"""
 from models import storage
 
 
@@ -33,14 +35,18 @@ class REST_actions():
         storage.save()
         return {'status code': 201, 'object dict': obj.to_dict()}
 
-    def put(obj, args_to_ignore, request_body):
+    def put(cls, state_id, args_to_ignore, request_body):
+        """updates an object"""
+        all_objects = storage.all(cls)
         args = dict(
             filter(lambda a: a[0] not in args_to_ignore, request_body.items()))
-        print(type(obj))
-        obj_dict = obj.to_dict()
-        for k, v in args.items():
-            obj_dict[k] = v
-        
-        storage.save()
 
-        return {'status code': 201, 'object dict': obj.to_dict()}
+        if not all_objects.get(cls.__name__ + '.' + state_id):
+            return {'status code': 404}
+
+        for key, value in args.items():
+            setattr(all_objects[cls.__name__ + '.' + state_id], key, value)
+        all_objects[cls.__name__ + '.' + state_id].save()
+        storage.reload()
+        return {'status code': 201, 'object dict':
+                all_objects[cls.__name__ + '.' + state_id].to_dict()}
