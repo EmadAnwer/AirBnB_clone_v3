@@ -85,6 +85,10 @@ def places_search():
         return jsonify({'error': 'Not a JSON'}), 400
 
     all_places = storage.all(Place)
+    # {"city_id":place}
+    # convert list to dict
+    all_places_dict = {v.city_id: v for k, v in all_places.items()}
+
     if request_body == {}:
         places = list(map(lambda x: x.to_dict(), all_places.values()))
         return jsonify(places)
@@ -97,3 +101,9 @@ def places_search():
     cities_ids = request_body.get('cities', [])
     cities_list.extend(cities_ids)
     cities_list = list(set(cities_list))
+
+    filtered_places = []
+    for x in cities_list:
+        place = all_places_dict.get(x, None)
+        if place:
+            filtered_places.append(all_places_dict[x])
