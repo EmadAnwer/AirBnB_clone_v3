@@ -85,10 +85,6 @@ def places_search():
     except Exception as e:
         return jsonify({'error': 'Not a JSON'}), 400
 
-    # map all places by city_id
-    all_places = {v.city_id: v
-                  for k, v in storage.all(Place).items()}
-
     # body values
     body_states = request_body.get('states', [])
     body_cities = request_body.get('cities', [])
@@ -97,40 +93,49 @@ def places_search():
     # if there are no states, cities or amenities or empty body
     if request_body == {} or (body_states == [] and
                               body_cities == [] and body_amenities == []):
+        all_places = storage.all(Place)
         all_places_list = list(map(lambda p: p.to_dict(), all_places.values()))
         return jsonify(all_places_list)
+
     # get all cities ids for the states
+    cities_places = {}
     for state_id in body_states:
         state = storage.get(State, state_id)
         if state:
-            body_cities.extend(list(map(lambda c: c.id, state.cities)))
+            for city in state.cities:
+                cities_places[city.id] = city.places
 
-    # unique cities ids
-    unique_cities = set(body_cities)
-
-    # places by unique cities
-    filterd_places = {}
-    for city_id in unique_cities:
-        filterd_places[city_id] = all_places.get(city_id)
+    # get places from body cities
+    for city_id in body_cities:
+        # if city_id is not in cities_places
+        if city_id not in cities_places.keys():
+            cities_places[city_id] = storage.get(City, city_id).places
 
     # filter by amenities
     if body_amenities:
         places_with_amenities = []
-        for city_id, place in filterd_places.items():
+        for city_id, places in cities_places.items():
             # amenities is of type Amenity
             if getenv("HBNB_TYPE_STORAGE") == "db":
-                if all(list(map(lambda a: a in list(map(lambda c: c.id, place.amenities)), body_amenities))):
-                    # delete amenities from place dict
-                    del place.amenities
-                    places_with_amenities.append(place.to_dict())
+                for place in places:
+                    if all(list(map(lambda a: a in
+                                    list(map(lambda c: c.id, place.amenities)),
+                                    body_amenities))):
+                        # delete amenities from place dict
+                        del place.amenities
+                        places_with_amenities.append(place.to_dict())
             else:
-                if all(list(map(lambda a: a in place.amenities, body_amenities))):
-                    # delete amenities from place dict
-                    del place.amenities
-                    places_with_amenities.append(place.to_dict())
+                for place in places:
+                    if all(list(map(lambda a: a in place.amenities,
+                                    body_amenities))):
+                        # delete amenities from place dict
+                        del place.amenities
+                        places_with_amenities.append(place.to_dict())
 
-        return jsonify(list(map(lambda p: p.to_dict(), places_with_amenities)))
+        return jsonify(places_with_amenities)
     else:
-        all_places_list = list(
-            map(lambda p: p.to_dict(), filterd_places.values()))
-        return jsonify(all_places_list)
+        cities_places_list = []
+        for city_id, places in cities_places.items():
+            for place in places:
+                cities_places_list.append(place.to_dict())
+        return jsonify(cities_places_list)
