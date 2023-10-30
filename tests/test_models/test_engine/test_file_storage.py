@@ -85,6 +85,14 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(type(count), int)
         self.assertEqual(count, len(storage.all()))
 
+    def test_get(self):
+        """Test that get returns the object with the given id"""
+        storage = FileStorage()
+        new_state = State(name="BOOOOOOOOOOOOO")
+        storage.new(new_state)
+        storage.save()
+        self.assertIs(storage.get(State, new_state.id), new_state)
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_new(self):
         """test that new adds an object to the FileStorage.__objects attr"""
