@@ -77,7 +77,17 @@ class TestFileStorage(unittest.TestCase):
 
     def test_count(self):
         """Test that count returns the number of objects in storage"""
-        self.assertIs(type(models.storage.count()), int)
+        storage = DBStorage()
+        new_dict = storage.all()
+        count = 0
+        for key, value in new_dict.items():
+            count += 1
+        self.assertEqual(storage.count(), count)
+        self.assertIs(type(storage.count()), int)
+
+
+
+
 
     def test_get(self):
         """Test that get returns the object with the given id"""
