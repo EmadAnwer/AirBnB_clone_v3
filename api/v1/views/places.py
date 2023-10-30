@@ -113,7 +113,7 @@ def places_search():
             city = storage.get(City, city_id)
             if city:
                 places.extend(city.places)
-
+    places = list(set(places))
     # filter by amenities
     if body_amenities:
         places_with_amenities = []
@@ -133,7 +133,6 @@ def places_search():
                     # delete amenities from place dict
                     del place.amenities
                     places_with_amenities.append(place.to_dict())
-
         return jsonify(places_with_amenities)
     else:
         # return all places
