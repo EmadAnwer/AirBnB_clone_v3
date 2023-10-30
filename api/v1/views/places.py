@@ -80,9 +80,8 @@ def put_place(place_id):
 def places_search():
     """creates a Place"""
 
-    try:
-        request_body = request.get_json()
-    except Exception as e:
+    request_body = request.get_json()
+    if request_body is None:
         return jsonify({'error': 'Not a JSON'}), 400
 
     # body values
@@ -127,11 +126,10 @@ def places_search():
                     del place.amenities
                     places_with_amenities.append(place.to_dict())
             else:
-
-                if all(list(map(lambda a: a in place.amenity_ids,
+                if all(list(map(lambda a: a in place.amenities,
                                 body_amenities))):
                     # delete amenities from place dict
-                    del place.amenity_ids
+                    del place.amenities
                     places_with_amenities.append(place.to_dict())
         return jsonify(places_with_amenities)
     else:
