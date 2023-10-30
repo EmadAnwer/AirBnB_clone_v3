@@ -128,10 +128,10 @@ def places_search():
                     places_with_amenities.append(place.to_dict())
             else:
 
-                if all(list(map(lambda a: a in place.amenities,
+                if all(list(map(lambda a: a in place.amenity_ids,
                                 body_amenities))):
                     # delete amenities from place dict
-                    del place.amenities
+                    del place.amenity_ids
                     places_with_amenities.append(place.to_dict())
         return jsonify(places_with_amenities)
     else:
