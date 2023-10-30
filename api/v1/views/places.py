@@ -118,7 +118,6 @@ def places_search():
     if body_amenities:
         places_with_amenities = []
         for place in places:
-            print(place)
             # amenities is of type Amenity
             if getenv("HBNB_TYPE_STORAGE") == "db":
                 if all(list(map(lambda a: a in
