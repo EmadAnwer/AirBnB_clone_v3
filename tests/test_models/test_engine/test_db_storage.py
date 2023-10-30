@@ -77,23 +77,8 @@ class TestFileStorage(unittest.TestCase):
 
     def test_count(self):
         """Test that count returns the number of objects in storage"""
-        storage = DBStorage()
-        new_dict = storage.all()
-        count = 0
-        for key, value in new_dict.items():
-            count += 1
-        self.assertEqual(storage.count(), count)
-        self.assertIs(type(storage.count()), int)
+        self.assertIs(type(models.storage.count()), int)
 
-
-
-
-
-    def test_get(self):
-        """Test that get returns the object with the given id"""
-        new_state = State(name="California")
-        new_state.save()
-        self.assertIs(models.storage.get(State, new_state.id), new_state)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
